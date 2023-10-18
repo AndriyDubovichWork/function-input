@@ -39,8 +39,8 @@ export default function Input() {
           // console.log(input);
         }}
       />
-      {generateAutocomplete(input, autocomplete).map(({ name }) => (
-        <p>{name}</p>
+      {generateAutocomplete(input, autocomplete).map(({ name, id }) => (
+        <p key={id}>{name}</p>
       ))}
     </>
   );
