@@ -4,6 +4,7 @@ import { getAutocomplete } from '../requests';
 import { useQuery } from '@tanstack/react-query';
 import calculate from '../lib/calculate';
 import { getTags, removeTag } from '../lib/tagOperations';
+import generateAutocomplete from '../lib/generateAutocomplete';
 
 export default function Input() {
   const { input, setInput, tagsCount, setTagsCount } = useStore(
@@ -27,16 +28,21 @@ export default function Input() {
         value={input}
         onChange={(e) => {
           setInput(e.target.value);
-          setTagsCount(getTags(e.target.value).length);
-          if (tagsCount < getTags(e.target.value).length) {
-            setInput(removeTag(input));
-          }
+          console.log();
+
+          // setTagsCount(getTags(e.target.value).length);
+          // if (tagsCount < getTags(e.target.value).length) {
+          //   setInput(removeTag(input));
+          // }
         }}
         onKeyDown={(e) => {
           // console.log(e.currentTarget.value);
           // console.log(input);
         }}
       />
+      {generateAutocomplete(input, autocomplete).map(({ name }) => (
+        <p>{name}</p>
+      ))}
     </>
   );
 }
