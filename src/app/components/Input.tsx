@@ -28,7 +28,6 @@ export default function Input() {
         value={input}
         onChange={(e) => {
           setInput(e.target.value);
-          console.log();
 
           // setTagsCount(getTags(e.target.value).length);
           // if (tagsCount < getTags(e.target.value).length) {
