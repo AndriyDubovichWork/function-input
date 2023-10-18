@@ -12,5 +12,7 @@ function removeTag(input: string) {
   }
   return input;
 }
-
-export { getTags, removeTag };
+function isOperatorWithCaret(str: string) {
+  return /^[+\-*/^]$/.test(str);
+}
+export { getTags, removeTag, isOperatorWithCaret };

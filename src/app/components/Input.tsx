@@ -3,11 +3,11 @@ import useStore from '../store';
 import { getAutocomplete } from '../requests';
 import { useQuery } from '@tanstack/react-query';
 import calculate from '../lib/calculate';
-import { getTags, removeTag } from '../lib/tagOperations';
+import { getTags, isOperatorWithCaret, removeTag } from '../lib/tagOperations';
 import generateAutocomplete from '../lib/generateAutocomplete';
 
 export default function Input() {
-  const { input, setInput, tagsCount, setTagsCount } = useStore(
+  const { input, setInput, inputArray, setInputArray } = useStore(
     (state) => state
   );
   const { data: autocomplete }: { data: undefined | Autocomplete[] } = useQuery(
@@ -19,6 +19,7 @@ export default function Input() {
 
   if (!autocomplete) return 'loading';
   // if (autocomplete) console.log(calculate(input, autocomplete));
+  // console.log(inputArray);
 
   return (
     <>
@@ -29,10 +30,8 @@ export default function Input() {
         onChange={(e) => {
           setInput(e.target.value);
 
-          // setTagsCount(getTags(e.target.value).length);
-          // if (tagsCount < getTags(e.target.value).length) {
-          //   setInput(removeTag(input));
-          // }
+          if (isOperatorWithCaret(e.target.value))
+            setInputArray([...inputArray, e.target.value]);
         }}
         onKeyDown={(e) => {
           // console.log(e.currentTarget.value);
@@ -41,7 +40,16 @@ export default function Input() {
       />
       {input &&
         generateAutocomplete(input, autocomplete).map(({ name, id }) => (
-          <p key={id}>{name}</p>
+          <p
+            className='cursor-pointer'
+            key={id}
+            onClick={() => {
+              setInput(input.replace(input, `"${name}"`));
+              setInputArray([...inputArray, input]);
+            }}
+          >
+            {name}
+          </p>
         ))}
     </>
   );
