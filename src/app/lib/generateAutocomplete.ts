@@ -3,6 +3,9 @@ export default function generateAutocomplete(
   autocomplete: Autocomplete[]
 ) {
   return autocomplete.filter((autocomplete) =>
-    autocomplete.name.toLowerCase().includes(searchTerm.toLowerCase())
+    autocomplete.name
+      .toLowerCase()
+      .replaceAll(' ', '')
+      .includes(searchTerm.toLowerCase().replaceAll(' ', ''))
   );
 }

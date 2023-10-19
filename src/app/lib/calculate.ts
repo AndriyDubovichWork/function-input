@@ -2,7 +2,7 @@ import { evaluate } from 'mathjs';
 
 function calculate(input: string, autocomplete: Autocomplete[]) {
   autocomplete.map(({ name, value }) => {
-    input = input.replace(`"${name}"`, String(value));
+    input = input.replace(name, String(value));
   });
   try {
     return evaluate(input);
