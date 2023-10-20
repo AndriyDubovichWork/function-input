@@ -5,11 +5,12 @@ import { useQuery } from '@tanstack/react-query';
 import calculate from '../lib/calculate';
 import { getTags, isOperatorWithCaret, removeTag } from '../lib/tagOperations';
 import generateAutocomplete from '../lib/generateAutocomplete';
-import isOnEdge from '../lib/isOnEdge';
+import replaceCursor from '../lib/replaceCursor';
 
 export default function Input() {
-  const { input, setInput, inputArray, setInputArray, inputStr, setInputStr } =
-    useStore((state) => state);
+  const { input, setInput, inputArray, setInputArray, inputStr } = useStore(
+    (state) => state
+  );
   const { data: autocomplete }: { data: undefined | Autocomplete[] } = useQuery(
     {
       queryKey: ['autocomplete'],
@@ -37,8 +38,6 @@ export default function Input() {
           }
         }}
         onKeyDown={(e) => {
-          // console.log(e.key);
-
           switch (e.key) {
             case 'Enter':
               setInputArray([...inputArray, input]);
@@ -50,23 +49,33 @@ export default function Input() {
               break;
             case 'ArrowLeft':
               if (!input) {
-                e.currentTarget.setSelectionRange(0, 0);
+                replaceCursor(
+                  e.currentTarget.selectionStart,
+                  inputArray,
+                  () => {
+                    replaceCursor(
+                      e.currentTarget.selectionStart,
+                      inputArray,
+                      (edge) => {
+                        e.currentTarget.setSelectionRange(edge.left, edge.left);
+                      }
+                    );
+                  }
+                );
               }
               break;
           }
-          const isCursorOnEdge = isOnEdge(
-            inputArray,
-            e.currentTarget.selectionStart
-          );
         }}
         onClick={(e) => {
-          const isCursorOnEdge = isOnEdge(
-            inputArray,
-            e.currentTarget.selectionStart,
-            (closest) => {
-              e.currentTarget.setSelectionRange(closest, closest);
-            }
-          );
+          if (!input) {
+            replaceCursor(
+              e.currentTarget.selectionStart,
+              inputArray,
+              (edge) => {
+                e.currentTarget.setSelectionRange(edge.center, edge.center);
+              }
+            );
+          }
         }}
       />
       {input &&
