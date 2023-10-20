@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import calculate from '../lib/calculate';
 import { getTags, isOperatorWithCaret, removeTag } from '../lib/tagOperations';
 import generateAutocomplete from '../lib/generateAutocomplete';
+import isOnEdge from '../lib/isOnEdge';
 
 export default function Input() {
   const { input, setInput, inputArray, setInputArray, inputStr, setInputStr } =
@@ -17,8 +18,6 @@ export default function Input() {
   );
 
   if (!autocomplete) return 'loading';
-
-  // console.log(inputArray);
 
   return (
     <>
@@ -38,8 +37,8 @@ export default function Input() {
           }
         }}
         onKeyDown={(e) => {
-          // console.log(input);
-          // console.log(inputStr);
+          // console.log(e.key);
+
           switch (e.key) {
             case 'Enter':
               setInputArray([...inputArray, input]);
@@ -49,7 +48,25 @@ export default function Input() {
                 setInputArray(inputArray.slice(0, -1), ' ');
               }
               break;
+            case 'ArrowLeft':
+              if (!input) {
+                e.currentTarget.setSelectionRange(0, 0);
+              }
+              break;
           }
+          const isCursorOnEdge = isOnEdge(
+            inputArray,
+            e.currentTarget.selectionStart
+          );
+        }}
+        onClick={(e) => {
+          const isCursorOnEdge = isOnEdge(
+            inputArray,
+            e.currentTarget.selectionStart,
+            (closest) => {
+              e.currentTarget.setSelectionRange(closest, closest);
+            }
+          );
         }}
       />
       {input &&
